@@ -9,8 +9,12 @@ class ConfigHelper:
 
     @staticmethod
     def get_key(key):
-        config_path = os.path.join(os.path.dirname(__file__), "../../tests/config/config.json")
-        print(f"Looking for config file at: {os.path.abspath(config_path)}")  # Debugging line
+        config_path = os.path.join(
+            os.path.dirname(__file__), "../../tests/config/config.json"
+        )
+        print(
+            f"Looking for config file at: {os.path.abspath(config_path)}"
+        )
         api_key = None
         if os.path.exists(config_path):
             try:
@@ -18,7 +22,9 @@ class ConfigHelper:
                     config = json.load(f)
                     api_key = config.get(key)
             except json.JSONDecodeError:
-                ConfigHelper.logger.error(f"Error parsing {config_path}")  # Use ConfigHelper.logger here
+                ConfigHelper.logger.error(
+                    f"Error parsing {config_path}"
+                )
         if not api_key:
             api_key = os.getenv(key)
 

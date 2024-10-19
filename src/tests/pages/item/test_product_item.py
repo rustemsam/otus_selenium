@@ -12,15 +12,22 @@ def test_check_the_price(browser):
     desktops_page.click_on_product_item("iMac")
     price = desktops_page.get_product_item_price()
 
-    assert price_on_catalog == price, \
-        f"Expected price {price_on_catalog}, but got {price}"
+    assert (
+        price_on_catalog == price
+    ), f"Expected price {price_on_catalog}, but got {price}"
 
 
-@pytest.mark.parametrize("type, expected_text", [
-    ("card", "Success: You have added iMac to your shopping cart!"),
-    ("wishlist", "You must login or create an account to save iMac to your wish list!"),
-    ("comparison", "Success: You have added iMac to your product comparison!"),
-])
+@pytest.mark.parametrize(
+    "type, expected_text",
+    [
+        ("card", "Success: You have added iMac to your shopping cart!"),
+        (
+            "wishlist",
+            "You must login or create an account to save iMac to your wish list!",
+        ),
+        ("comparison", "Success: You have added iMac to your product comparison!"),
+    ],
+)
 def test_alert_message(browser, type, expected_text):
     home_page = HomePage(browser)
     desktops_page = home_page.go_to_page("Desktops")
@@ -36,8 +43,7 @@ def test_alert_message(browser, type, expected_text):
 
     text = desktops_page.get_successfully_text_alert()
     expected_text = expected_text
-    assert expected_text == text, \
-        f"Expected text {expected_text}, but got {text}"
+    assert expected_text == text, f"Expected text {expected_text}, but got {text}"
 
 
 def test_add_few_items_to_cart(browser):
@@ -53,11 +59,12 @@ def test_add_few_items_to_cart(browser):
     expected_price = quantity * price_cleaned
     price_value = desktops_page.get_price_from_basket()
     updated_price_in_card = price_value
-    assert expected_price == updated_price_in_card, \
-        f"Expected price for the item is {expected_price}, but got {price_value}"
+    assert (
+        expected_price == updated_price_in_card
+    ), f"Expected price for the item is {expected_price}, but got {price_value}"
 
 
-#TODO Bug 4
+# TODO Bug 4
 def test_add_wrong_item_to_cart(browser):
     home_page = HomePage(browser)
     desktops_page = home_page.go_to_page("Desktops")
@@ -69,5 +76,4 @@ def test_add_wrong_item_to_cart(browser):
 
     text = desktops_page.get_text_from_failure_alert()
     expected_text = "Failure, please use digits to add count"
-    assert expected_text == text, \
-        f"Expected text is {expected_text}, but got {text}"
+    assert expected_text == text, f"Expected text is {expected_text}, but got {text}"

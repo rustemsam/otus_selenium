@@ -2,7 +2,9 @@ from selenium.common import NoSuchElementException
 
 from src.main.helper.element_helper import ElementHelper
 from src.main.helper.wait_helper import WaitHelper
-from src.main.pages.administration.administration_dashboard_page import AdministrationDashboardPage
+from src.main.pages.administration.administration_dashboard_page import (
+    AdministrationDashboardPage,
+)
 
 
 class AdministrationLoginPage:
@@ -43,14 +45,18 @@ class AdministrationLoginPage:
 
     def get_admin_header_text(self) -> str:
         try:
-            return self.wait_helper.wait_for_element(self.browser, self.ADMIN_CARD_HEADER).text
+            return self.wait_helper.wait_for_element(
+                self.browser, self.ADMIN_CARD_HEADER
+            ).text
         except NoSuchElementException as e:
             print(f"Error when trying to retrieve admin header text: {e}")
             return ""
 
     def fill_username(self, username: str) -> None:
         try:
-            input_username_field = self.wait_helper.wait_for_element(self.browser, self.USERNAME_INPUT)
+            input_username_field = self.wait_helper.wait_for_element(
+                self.browser, self.USERNAME_INPUT
+            )
             input_username_field.clear()
             input_username_field.send_keys(username)
         except NoSuchElementException as e:
@@ -58,7 +64,9 @@ class AdministrationLoginPage:
 
     def fill_password(self, password: str) -> None:
         try:
-            input_password_field = self.wait_helper.wait_for_element(self.browser, self.PASSWORD_INPUT)
+            input_password_field = self.wait_helper.wait_for_element(
+                self.browser, self.PASSWORD_INPUT
+            )
             input_password_field.clear()
             input_password_field.send_keys(password)
         except NoSuchElementException as e:
@@ -72,7 +80,9 @@ class AdministrationLoginPage:
 
     def get_failure_alert_text(self) -> str:
         try:
-            return self.wait_helper.wait_for_element(self.browser, self.ALERT_FAILURE).text
+            return self.wait_helper.wait_for_element(
+                self.browser, self.ALERT_FAILURE
+            ).text
         except NoSuchElementException as e:
             print(f"No failure alert found: {e}")
             return ""

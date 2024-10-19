@@ -14,16 +14,21 @@ class TopPanelPage:
 
     def get_currency(self) -> str:
         try:
-            return self.wait_helper.wait_for_element(self.browser, self.CURRENT_CURRENCY).text
+            return self.wait_helper.wait_for_element(
+                self.browser, self.CURRENT_CURRENCY
+            ).text
         except NoSuchElementException as e:
             print(f"Error when trying to retrieve current currency: {e}")
             return ""
 
     def change_currency(self, currency_name: str) -> str:
         try:
-            self.wait_helper.wait_for_element(self.browser, self.CURRENCY_DROPDOWN).click()
-            currency_option = self.wait_helper.wait_for_element(self.browser,
-                                                                self.CURRENCY_OPTION.format(currency_name))
+            self.wait_helper.wait_for_element(
+                self.browser, self.CURRENCY_DROPDOWN
+            ).click()
+            currency_option = self.wait_helper.wait_for_element(
+                self.browser, self.CURRENCY_OPTION.format(currency_name)
+            )
             currency_text = currency_option.text
             currency_symbol = currency_text.split(" ")[0]
             currency_option.click()

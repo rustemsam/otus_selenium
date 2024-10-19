@@ -14,7 +14,9 @@ class AdministrationDashboardPage:
 
     def get_admin_dashboard_page_header(self) -> str:
         try:
-            header_element = self.wait_helper.wait_for_element(self.browser, self.PAGE_HEADER)
+            header_element = self.wait_helper.wait_for_element(
+                self.browser, self.PAGE_HEADER
+            )
             return header_element.text
         except NoSuchElementException as e:
             print(f"Page header element not found: {e}")

@@ -16,13 +16,17 @@ class BasePage:
 
     def wait_until_successful_alert_disappeared(self) -> None:
         try:
-            self.wait_helper.wait_for_element_to_disappear(self.browser, self.SUCCESS_ALERT)
+            self.wait_helper.wait_for_element_to_disappear(
+                self.browser, self.SUCCESS_ALERT
+            )
         except NoSuchElementException:
             print("Success alert not found")
 
     def get_text_from_failure_alert(self) -> str:
         try:
-            return self.wait_helper.wait_for_element(self.browser, self.FAILURE_ALERT).text
+            return self.wait_helper.wait_for_element(
+                self.browser, self.FAILURE_ALERT
+            ).text
         except NoSuchElementException:
             print("Failure alert not found.")
             return ""
@@ -30,8 +34,10 @@ class BasePage:
     def get_price_from_basket(self) -> float:
         self.wait_until_successful_alert_disappeared()
         try:
-            updated_price = self.wait_helper.wait_for_element(self.browser, self.BASKET).text
-            price_value = updated_price.split('$')[-1].strip()
+            updated_price = self.wait_helper.wait_for_element(
+                self.browser, self.BASKET
+            ).text
+            price_value = updated_price.split("$")[-1].strip()
             return float(price_value)
         except (NoSuchElementException, ValueError) as e:
             print(f"Error retrieving price from basket: {e}")

@@ -27,8 +27,12 @@ class HomePage(BasePage):
 
     def go_to_page(self, menu_item: str):
         try:
-            self.wait_helper.wait_for_element(self.browser, self.MENU.format(menu_item)).click()
-            self.wait_helper.wait_for_element(self.browser, self.SHOW_ALL.format(menu_item)).click()
+            self.wait_helper.wait_for_element(
+                self.browser, self.MENU.format(menu_item)
+            ).click()
+            self.wait_helper.wait_for_element(
+                self.browser, self.SHOW_ALL.format(menu_item)
+            ).click()
             return self.get_page_object(menu_item)
         except NoSuchElementException as e:
             print(f"Error when was going  to page '{menu_item}': {e}")
@@ -50,7 +54,7 @@ class HomePage(BasePage):
     def get_panel_page_object(self, top_bottom: str):
         panel_objects = {
             "top": TopPanelPage(self.browser),
-            "bottom": BottomPanelPage(self.browser)
+            "bottom": BottomPanelPage(self.browser),
         }
         try:
             return panel_objects[top_bottom]
@@ -59,7 +63,9 @@ class HomePage(BasePage):
 
     def get_list_categories(self) -> list:
         try:
-            categories = self.wait_helper.wait_for_element(self.browser, self.CATEGORIES)
+            categories = self.wait_helper.wait_for_element(
+                self.browser, self.CATEGORIES
+            )
             return self.element_helper.get_list_items_texts(categories)
         except NoSuchElementException as e:
             print(f"Error when trying to retrieve categories: {e}")
@@ -67,7 +73,9 @@ class HomePage(BasePage):
 
     def get_items_on_featured(self) -> list:
         try:
-            element = self.wait_helper.wait_for_element(self.browser, self.FEATURED_ITEMS)
+            element = self.wait_helper.wait_for_element(
+                self.browser, self.FEATURED_ITEMS
+            )
             return element.find_elements(By.XPATH, "div")
         except NoSuchElementException as e:
             print(f"Error when trying to retrieve featured items: {e}")
@@ -75,7 +83,9 @@ class HomePage(BasePage):
 
     def add_item_to_basket(self, item: str) -> None:
         try:
-            element = self.wait_helper.wait_for_element(self.browser, self.ITEM_TO_CARD.format(item))
+            element = self.wait_helper.wait_for_element(
+                self.browser, self.ITEM_TO_CARD.format(item)
+            )
             self.browser.execute_script(self.JS_ARGUMENT_CLICK, element)
             self.wait_until_successful_alert_disappeared()
         except NoSuchElementException as e:
@@ -84,7 +94,9 @@ class HomePage(BasePage):
     def get_item_from_basket(self) -> list:
         try:
             self.wait_helper.wait_for_element(self.browser, self.BASKET).click()
-            elements = self.wait_helper.wait_for_element(self.browser, self.ITEMS_IN_BASKET)
+            elements = self.wait_helper.wait_for_element(
+                self.browser, self.ITEMS_IN_BASKET
+            )
             return self.element_helper.get_list_items_texts(elements, tag="td")
         except NoSuchElementException as e:
             print(f"Error when trying to retrieve items from basket: {e}")
@@ -92,7 +104,11 @@ class HomePage(BasePage):
 
     def get_price_of_product(self, product_name: str) -> str:
         try:
-            return self.wait_helper.wait_for_element(self.browser, self.PRODUCT_PRICE.format(product_name)).text
+            return self.wait_helper.wait_for_element(
+                self.browser, self.PRODUCT_PRICE.format(product_name)
+            ).text
         except NoSuchElementException as e:
-            print(f"Error when trying to retrieve price for product '{product_name}': {e}")
+            print(
+                f"Error when trying to retrieve price for product '{product_name}': {e}"
+            )
             return "0.0"

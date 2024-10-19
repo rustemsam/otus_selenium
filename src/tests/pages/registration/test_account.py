@@ -1,7 +1,7 @@
 import time
 
 import pytest
-from selenium.common import TimeoutException, NoSuchElementException
+from selenium.common import NoSuchElementException
 
 from src.main.models.login_model import AccountRequestBody
 from src.main.pages.my_account.account_login_page import AccountLoginPage
@@ -10,8 +10,12 @@ from src.main.pages.my_account.account_register_page import AccountRegisterPage
 
 @pytest.fixture
 def create_user(browser):
-    post_request = AccountRequestBody(first_name="first", last_name="last", email="teczxst@test.com",
-                                      password="qwerty123")
+    post_request = AccountRequestBody(
+        first_name="first",
+        last_name="last",
+        email="teczxst@test.com",
+        password="qwerty123",
+    )
     account_register_page = AccountRegisterPage(browser)
     account_register_page.create_user(post_request)
     return post_request
@@ -19,23 +23,41 @@ def create_user(browser):
 
 def test_account_registration(browser):
     ts = int(time.time())
-    post_request = AccountRequestBody(first_name=f"test+{ts}", last_name=f"last_name+{ts}",
-                                      email=f"test_{ts}@test.com", password="qwerty123")
+    post_request = AccountRequestBody(
+        first_name=f"test+{ts}",
+        last_name=f"last_name+{ts}",
+        email=f"test_{ts}@test.com",
+        password="qwerty123",
+    )
     account_register_page = AccountRegisterPage(browser)
     account_register_page.create_user(post_request)
 
-    successful_registration_text = account_register_page.get_successful_registration_message()
+    successful_registration_text = (
+        account_register_page.get_successful_registration_message()
+    )
     expected_text = "Your Account Has Been Created!"
     assert (
             expected_text == successful_registration_text
     ), f"Expected text is {expected_text}, but got {successful_registration_text}"
 
 
-@pytest.mark.parametrize("post_request", [
-    AccountRequestBody(first_name="", last_name="f4wcYnrgUe2bHSrJWLpURHpOaTSZvagD1", email="", password="123"),
-    AccountRequestBody(first_name="f4wcYnrgUe2bHSrJWLpURHpOaTSZvagD!", last_name="", email="",
-                       password="nQOH1NvCpj6TJS5zIfGJD")  # TODO: BUG 5
-])
+@pytest.mark.parametrize(
+    "post_request",
+    [
+        AccountRequestBody(
+            first_name="",
+            last_name="f4wcYnrgUe2bHSrJWLpURHpOaTSZvagD1",
+            email="",
+            password="123",
+        ),
+        AccountRequestBody(
+            first_name="f4wcYnrgUe2bHSrJWLpURHpOaTSZvagD!",
+            last_name="",
+            email="",
+            password="nQOH1NvCpj6TJS5zIfGJD",
+        ),  # TODO: BUG 5
+    ],
+)
 def test_account_registration_with_invalid_data(browser, post_request):
     account_register_page = AccountRegisterPage(browser)
     account_register_page.create_user(post_request)
@@ -64,15 +86,25 @@ def test_account_registration_with_invalid_data(browser, post_request):
     ), f"Expected text is {expected_email_text}, but got {text_email}"
 
 
-@pytest.mark.parametrize("email, expected_test", [
-    ("_@_.com", "A part following '@' should not contain the symbol '_'."),
-    ("1@.com", "'.' is used at a wrong position in '.com'."),
-    ("test.com", "Please include an '@' in the email address. 'test.com' is missing an '@'."),
-    ("@.com", "Please enter a part followed by '@'. '@.com' is incomplete."),
-])
+@pytest.mark.parametrize(
+    "email, expected_test",
+    [
+        ("_@_.com", "A part following '@' should not contain the symbol '_'."),
+        ("1@.com", "'.' is used at a wrong position in '.com'."),
+        (
+                "test.com",
+                "Please include an '@' in the email address. 'test.com' is missing an '@'.",
+        ),
+        ("@.com", "Please enter a part followed by '@'. '@.com' is incomplete."),
+    ],
+)
 def test_account_registration_with_invalid_email(browser, email, expected_test):
-    post_request = AccountRequestBody(first_name="first_name", last_name="last_name",
-                                      email=email, password="qwerty123")
+    post_request = AccountRequestBody(
+        first_name="first_name",
+        last_name="last_name",
+        email=email,
+        password="qwerty123",
+    )
     account_register_page = AccountRegisterPage(browser)
     account_register_page.create_user(post_request)
     validation_message = account_register_page.get_pop_up_email_validation_error()
@@ -83,16 +115,18 @@ def test_account_registration_with_invalid_email(browser, email, expected_test):
 
 def test_account_registration_without_policy_agree(browser):
     ts = int(time.time())
-    post_request = AccountRequestBody(first_name=f"test+{ts}", last_name=f"last_name+{ts}",
-                                      email=f"test_{ts}@test.com", password="qwerty123")
+    post_request = AccountRequestBody(
+        first_name=f"test+{ts}",
+        last_name=f"last_name+{ts}",
+        email=f"test_{ts}@test.com",
+        password="qwerty123",
+    )
     account_register_page = AccountRegisterPage(browser)
     account_register_page.create_user(post_request, agree_checkbox=False)
 
     text = account_register_page.get_text_from_failure_alert()
     expected_text = "Warning: You must agree to the Privacy Policy!"
-    assert (
-            expected_text == text
-    ), f"Expected text is {expected_text}, but got {text}"
+    assert expected_text == text, f"Expected text is {expected_text}, but got {text}"
 
 
 def test_account_registration_with_same_email(browser, create_user):
@@ -101,9 +135,7 @@ def test_account_registration_with_same_email(browser, create_user):
     account_register_page.create_user(post_request)
     text = account_register_page.get_text_from_failure_alert()
     expected_text = "Warning: E-Mail Address is already registered!"
-    assert (
-            expected_text == text
-    ), f"Expected text is {expected_text}, but got {text}"
+    assert expected_text == text, f"Expected text is {expected_text}, but got {text}"
 
 
 # 3.1. автотест логина-разлогина в админку с проверкой, что логин был выполнен
@@ -123,7 +155,9 @@ def test_account_login(browser, create_user):
             if "Invalid token session" in alert_message:
                 print("Session token expired during login attempt.")
                 browser.refresh()
-                account_login_page.login_to_account(post_request.email, post_request.password)
+                account_login_page.login_to_account(
+                    post_request.email, post_request.password
+                )
                 account_login_page.wait_for_account_page_loaded()
             else:
                 print(f"Login failed with alert message: {alert_message}")
@@ -133,6 +167,8 @@ def test_account_login(browser, create_user):
             raise Exception("Login failed without an error message.")
 
     account_sections = account_login_page.get_account_sections()
-    expected_list = ['My Account', 'My Orders', 'My Affiliate Account', 'Newsletter']
+    expected_list = ["My Account", "My Orders", "My Affiliate Account", "Newsletter"]
 
-    assert expected_list == account_sections, f"Expected list is {expected_list}, but got {account_sections}"
+    assert (
+            expected_list == account_sections
+    ), f"Expected list is {expected_list}, but got {account_sections}"

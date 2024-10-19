@@ -1,4 +1,3 @@
-import pytest
 from selenium.common import TimeoutException
 
 from src.main.pages.base_page import BasePage
@@ -28,13 +27,16 @@ class AccountLoginPage(BasePage):
             self.fill_input_field(self.INPUT_EMAIL_NAME, login)
             self.fill_input_field(self.INPUT_PASSWORD_NAME, password)
 
-            self.wait_helper.wait_for_element_to_be_clickable(self.browser, self.SUBMIT_BUTTON).click()
+            self.wait_helper.wait_for_element_to_be_clickable(
+                self.browser, self.SUBMIT_BUTTON
+            ).click()
         except Exception as e:
             print(f"Error during retry login: {str(e)}")
 
-
     def wait_for_account_page_loaded(self, timeout: int = DEFAULT_TIMEOUT):
-        self.wait_helper.wait_for_new_page_loaded(self.browser, "account&customer_token=", timeout)
+        self.wait_helper.wait_for_new_page_loaded(
+            self.browser, "account&customer_token=", timeout
+        )
 
     def personal_account_is_opened(self) -> bool:
         try:

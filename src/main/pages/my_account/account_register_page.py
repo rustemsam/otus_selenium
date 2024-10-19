@@ -30,18 +30,23 @@ class AccountRegisterPage(BasePage):
         url = f"{self.browser.base_url}/index.php?route=account/register"
         self.browser.get(url)
 
-    def create_user(self, account_request_body: AccountRequestBody,
-                    agree_checkbox: bool = "true") -> AccountRequestBody:
+    def create_user(
+        self, account_request_body: AccountRequestBody, agree_checkbox: bool = "true"
+    ) -> AccountRequestBody:
         self.fill_input_field(self.INPUT_FIRST_NAME, account_request_body.first_name)
         self.fill_input_field(self.INPUT_LAST_NAME, account_request_body.last_name)
         self.fill_input_field(self.INPUT_EMAIL, account_request_body.email)
         self.fill_input_field(self.INPUT_PASSWORD, account_request_body.password)
 
         if agree_checkbox:
-            agree_checkbox = self.wait_helper.wait_for_element(self.browser, self.AGREE_CHECKBOX)
+            agree_checkbox = self.wait_helper.wait_for_element(
+                self.browser, self.AGREE_CHECKBOX
+            )
             self.browser.execute_script(self.JS_ARGUMENT_CLICK, agree_checkbox)
 
-        submit_button = self.wait_helper.wait_for_element_to_be_clickable(self.browser, self.SUBMIT_BUTTON)
+        submit_button = self.wait_helper.wait_for_element_to_be_clickable(
+            self.browser, self.SUBMIT_BUTTON
+        )
         self.browser.execute_script(self.JS_ARGUMENT_CLICK, submit_button)
 
         return account_request_body
@@ -51,13 +56,19 @@ class AccountRegisterPage(BasePage):
             "first_name": self.FIRST_NAME_VALIDATION,
             "last_name": self.LAST_NAME_VALIDATION,
             "email": self.EMAIL_VALIDATION,
-            "password": self.PASSWORD_VALIDATION
+            "password": self.PASSWORD_VALIDATION,
         }.get(field_name)
 
-        return self.wait_helper.wait_for_element(self.browser, validation_xpath).text if validation_xpath else ""
+        return (
+            self.wait_helper.wait_for_element(self.browser, validation_xpath).text
+            if validation_xpath
+            else ""
+        )
 
     def get_successful_registration_message(self) -> str:
-        return self.wait_helper.wait_for_element(self.browser, self.SUCCESSFUL_REGISTRATION).text
+        return self.wait_helper.wait_for_element(
+            self.browser, self.SUCCESSFUL_REGISTRATION
+        ).text
 
     def get_pop_up_email_validation_error(self) -> str:
         email_field = self.browser.find_element(By.NAME, self.EMAIL)

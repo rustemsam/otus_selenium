@@ -14,7 +14,9 @@ class BottomPanelPage:
 
     def get_bottom_panel_options(self, option: str) -> list:
         try:
-            ul_element = self.wait_helper.wait_for_element(self.browser, self.BOTTOM_PANEL.format(option))
+            ul_element = self.wait_helper.wait_for_element(
+                self.browser, self.BOTTOM_PANEL.format(option)
+            )
             return self.element_helper.get_list_items_texts(ul_element)
         except NoSuchElementException:
             print(f"Bottom panel for option '{option}' not found.")
