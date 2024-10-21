@@ -10,7 +10,7 @@ from src.tests.conftest import browser
 class ElementHelper:
     @staticmethod
     def get_list_items_texts(
-            parent_element: WebElement, locator: By = By.TAG_NAME, tag: str = "li"
+        parent_element: WebElement, locator: By = By.TAG_NAME, tag: str = "li"
     ) -> List[str]:
         try:
             li_elements = parent_element.find_elements(locator, tag)
