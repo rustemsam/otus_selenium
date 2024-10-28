@@ -1,64 +1,28 @@
 import time
 
 import pytest
-from selenium.common import NoSuchElementException, TimeoutException
-from selenium.webdriver.common.by import By
+from selenium.common import NoSuchElementException
 
-from src.main.helper.element_helper import ElementHelper
-from src.main.helper.wait_helper import WaitHelper
 from src.main.models.login_model import AccountRequestBody
-
-INPUT_FIRST_NAME = "//input[@id='input-firstname']"
-INPUT_LAST_NAME = "//input[@id='input-lastname']"
-INPUT_EMAIL = "//input[@id='input-email']"
-INPUT_PASSWORD = "//input[@id='input-password']"
-FIRST_NAME_VALIDATION = "//div[@id='error-firstname']"
-LAST_NAME_VALIDATION = "//div[@id='error-lastname']"
-EMAIL_VALIDATION = "//div[@id='error-email']"
-PASSWORD_VALIDATION = "//div[@id='error-password']"
-BOTTOM_XPATH = "window.scrollTo(0, document.body.scrollHeight);"
-AGREE_CHECKBOX = "//input[@name='agree']"
-SUBMIT_BUTTON = "//button[@type='submit']"
-JS_ARGUMENT_CLICK = "arguments[0].click();"
-EMAIL = "email"
-JS_VALIDATION_MESSAGE = "return arguments[0].validationMessage;"
-FAILURE_ALERT = "//dirv[@class='alert alert-danger alert-dismissible']"
-SUCCESSFUL_REGISTRATION = "//div[@id='common-success']/div/div/h1"
-INPUT_EMAIL_NAME = "//input[@id='input-email']"
-INPUT_PASSWORD_NAME = "//input[@id='input-password']"
-ALERT_DANGER = "//div[contains(@class,'alert-danger')]"
-ACCOUNT_CONTENT = "//div[@id='content']"
-
-
-@pytest.fixture(scope="session")
-def wait_helper():
-    return WaitHelper()
-
-
-@pytest.fixture(scope="session")
-def element_helper():
-    return ElementHelper()
-
-
-@pytest.fixture(autouse=True)
-def run_around_tests(browser):
-    url = f"{browser.base_url}/index.php?route=account/register"
-    browser.get(url)
+from src.main.pages.alert_element import AlertElement
+from src.main.pages.my_account.account_login_page import AccountLoginPage
+from src.main.pages.my_account.account_register_page import AccountRegisterPage
 
 
 @pytest.fixture
-def create_user_fixture(browser, wait_helper):
+def create_user_fixture(browser):
     post_request = AccountRequestBody(
         first_name="first",
         last_name="last",
-        email="teczxst@test.com",
+        email="l7.test@test.com",
         password="qwerty123",
     )
-    create_user(browser, wait_helper, post_request)
+    account_page = AccountRegisterPage(browser)
+    account_page.create_user(post_request)
     return post_request
 
 
-def test_account_registration(browser, wait_helper):
+def test_account_registration(browser):
     ts = int(time.time())
     post_request = AccountRequestBody(
         first_name=f"test+{ts}",
@@ -66,11 +30,10 @@ def test_account_registration(browser, wait_helper):
         email=f"test_{ts}@test.com",
         password="qwerty123",
     )
-    create_user(browser, wait_helper, post_request)
+    account_page = AccountRegisterPage(browser)
+    account_page.create_user(post_request)
 
-    successful_registration_text = get_successful_registration_message(
-        browser, wait_helper
-    )
+    successful_registration_text = account_page.get_successful_registration_message()
     expected_text = "Your Account Has Been Created!"
     assert (
         expected_text == successful_registration_text
@@ -94,13 +57,14 @@ def test_account_registration(browser, wait_helper):
         ),  # TODO: BUG 5
     ],
 )
-def test_account_registration_with_invalid_data(browser, wait_helper, post_request):
-    create_user(browser, wait_helper, post_request)
+def test_account_registration_with_invalid_data(browser, post_request):
+    account_page = AccountRegisterPage(browser)
+    account_page.create_user(post_request)
 
-    text_first_name = get_validation_error(browser, wait_helper, "first_name")
-    text_last_name = get_validation_error(browser, wait_helper, "last_name")
-    text_email = get_validation_error(browser, wait_helper, "email")
-    text_password = get_validation_error(browser, wait_helper, "password")
+    text_first_name = account_page.get_validation_error("first_name")
+    text_last_name = account_page.get_validation_error("last_name")
+    text_email = account_page.get_validation_error("email")
+    text_password = account_page.get_validation_error("password")
 
     expected_first_name_text = "First Name must be between 1 and 32 characters!"
     expected_last_name_text = "Last Name must be between 1 and 32 characters!"
@@ -133,24 +97,22 @@ def test_account_registration_with_invalid_data(browser, wait_helper, post_reque
         ("@.com", "Please enter a part followed by '@'. '@.com' is incomplete."),
     ],
 )
-def test_account_registration_with_invalid_email(
-    browser, wait_helper, email, expected_test
-):
+def test_account_registration_with_invalid_email(browser, email, expected_test):
     post_request = AccountRequestBody(
         first_name="first_name",
         last_name="last_name",
         email=email,
         password="qwerty123",
     )
-
-    create_user(browser, wait_helper, post_request)
-    validation_message = get_pop_up_email_validation_error(browser)
+    account_page = AccountRegisterPage(browser)
+    account_page.create_user(post_request)
+    validation_message = account_page.get_pop_up_email_validation_error()
     assert (
         expected_test == validation_message
     ), f"Expected text is {expected_test}, but got {validation_message}"
 
 
-def test_account_registration_without_policy_agree(browser, wait_helper):
+def test_account_registration_without_policy_agree(browser):
     ts = int(time.time())
     post_request = AccountRequestBody(
         first_name=f"test+{ts}",
@@ -158,152 +120,54 @@ def test_account_registration_without_policy_agree(browser, wait_helper):
         email=f"test_{ts}@test.com",
         password="qwerty123",
     )
-
-    create_user(browser, wait_helper, post_request, agree_checkbox=False)
-
-    text = get_text_from_failure_alert(browser, wait_helper)
+    account_page = AccountRegisterPage(browser)
+    account_page.create_user(post_request, agree_checkbox=False)
+    alert = AlertElement(browser)
+    text = alert.get_failure_text_alert()
     expected_text = "Warning: You must agree to the Privacy Policy!"
     assert expected_text == text, f"Expected text is {expected_text}, but got {text}"
 
 
-def test_account_registration_with_same_email(
-    browser, wait_helper, create_user_fixture
-):
+def test_account_registration_with_same_email(browser, create_user_fixture):
     post_request = create_user_fixture
-    url = f"{browser.base_url}/index.php?route=account/register"
-    browser.get(url)
-    create_user(browser, wait_helper, post_request)
-    text = get_text_from_failure_alert(browser, wait_helper)
+    account_page = AccountRegisterPage(browser)
+    account_page.create_user(post_request)
+    alert = AlertElement(browser)
+    text = alert.get_failure_text_alert()
     expected_text = "Warning: E-Mail Address is already registered!"
     assert expected_text == text, f"Expected text is {expected_text}, but got {text}"
 
 
 # 3.1. автотест логина-разлогина в админку с проверкой, что логин был выполнен
-def test_account_login(browser, wait_helper, element_helper, create_user_fixture):
+def test_account_login(browser, create_user_fixture):
     post_request = create_user_fixture
-    url = f"{browser.base_url}//index.php?route=account/login"
-    browser.get(url)
-    login_to_account(browser, wait_helper, post_request.email, post_request.password)
+    account_login = AccountLoginPage(browser)
+    account_login.login_to_account(post_request.email, post_request.password)
+    alert = AlertElement(browser)
 
-    if personal_account_is_opened(browser, wait_helper):
+    if account_login.personal_account_is_opened():
         print("Login successful.")
     else:
         print("Login unsuccessful, checking for alerts.")
-
         try:
-            alert_message = get_text_from_alert_danger(browser, wait_helper)
-
+            alert_message = alert.get_failure_text_alert()
+            print(f"Alert message on login failure: '{alert_message}'")
             if "Invalid token session" in alert_message:
                 print("Session token expired during login attempt.")
                 browser.refresh()
-                login_to_account(
-                    browser, wait_helper, post_request.email, post_request.password
+                account_login.login_to_account(
+                    post_request.email, post_request.password
                 )
-                wait_for_account_page_loaded(browser, wait_helper)
+                account_login.wait_for_account_page_loaded()
             else:
                 print(f"Login failed with alert message: {alert_message}")
-
         except NoSuchElementException:
             print("Login attempt failed, but no alert was found.")
             raise Exception("Login failed without an error message.")
 
-    account_sections = get_account_sections(browser, wait_helper, element_helper)
+    account_sections = account_login.get_account_sections()
     expected_list = ["My Account", "My Orders", "My Affiliate Account", "Newsletter"]
 
     assert (
         expected_list == account_sections
     ), f"Expected list is {expected_list}, but got {account_sections}"
-
-
-def create_user(
-    browser,
-    wait_helper,
-    account_request_body: AccountRequestBody,
-    agree_checkbox: bool = "true",
-) -> AccountRequestBody:
-    fill_input_field(
-        browser, wait_helper, INPUT_FIRST_NAME, account_request_body.first_name
-    )
-    fill_input_field(
-        browser, wait_helper, INPUT_LAST_NAME, account_request_body.last_name
-    )
-    fill_input_field(browser, wait_helper, INPUT_EMAIL, account_request_body.email)
-    fill_input_field(
-        browser, wait_helper, INPUT_PASSWORD, account_request_body.password
-    )
-
-    if agree_checkbox:
-        agree_checkbox = wait_helper.wait_for_element(browser, AGREE_CHECKBOX)
-        browser.execute_script(JS_ARGUMENT_CLICK, agree_checkbox)
-
-    submit_button = wait_helper.wait_for_element_to_be_clickable(browser, SUBMIT_BUTTON)
-    browser.execute_script(JS_ARGUMENT_CLICK, submit_button)
-
-    return account_request_body
-
-
-def fill_input_field(browser, wait_helper, locator: str, value: str) -> None:
-    element = wait_helper.wait_for_element(browser, locator)
-    element.clear()
-    element.send_keys(value)
-
-
-def get_validation_error(browser, wait_helper, field_name: str) -> str:
-    validation_xpath = {
-        "first_name": FIRST_NAME_VALIDATION,
-        "last_name": LAST_NAME_VALIDATION,
-        "email": EMAIL_VALIDATION,
-        "password": PASSWORD_VALIDATION,
-    }.get(field_name)
-
-    return (
-        wait_helper.wait_for_element(browser, validation_xpath).text
-        if validation_xpath
-        else ""
-    )
-
-
-def get_successful_registration_message(browser, wait_helper) -> str:
-    return wait_helper.wait_for_element(browser, SUCCESSFUL_REGISTRATION).text
-
-
-def get_pop_up_email_validation_error(browser) -> str:
-    email_field = browser.find_element(By.NAME, EMAIL)
-    return browser.execute_script(JS_VALIDATION_MESSAGE, email_field)
-
-
-def get_text_from_failure_alert(browser, wait_helper) -> str:
-    return wait_helper.wait_for_element(browser, FAILURE_ALERT).text
-
-
-def login_to_account(browser, wait_helper, login: str, password: str) -> None:
-    try:
-        fill_input_field(browser, wait_helper, INPUT_EMAIL_NAME, login)
-        fill_input_field(browser, wait_helper, INPUT_PASSWORD_NAME, password)
-
-        wait_helper.wait_for_element_to_be_clickable(browser, SUBMIT_BUTTON).click()
-    except Exception as e:
-        print(f"Error during retry login: {str(e)}")
-
-
-def personal_account_is_opened(browser, wait_helper) -> bool:
-    try:
-        wait_for_account_page_loaded(browser, wait_helper, 2)
-        is_opened = True
-    except TimeoutException:
-        print("Page did not load correctly after login within the expected time.")
-        is_opened = False
-    return is_opened
-
-
-def get_account_sections(browser, wait_helper, element_helper) -> list:
-    content = wait_helper.wait_for_element(browser, ACCOUNT_CONTENT)
-    return element_helper.get_list_items_texts(content, tag="h2")
-
-
-def wait_for_account_page_loaded(browser, wait_helper, timeout: int = 10):
-    wait_helper.wait_for_new_page_loaded(browser, "account&customer_token=", timeout)
-
-
-def get_text_from_alert_danger(browser, wait_helper) -> str:
-    return wait_helper.wait_for_element(browser, ALERT_DANGER).text
