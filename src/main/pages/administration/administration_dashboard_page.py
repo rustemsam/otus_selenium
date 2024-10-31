@@ -6,9 +6,6 @@ from src.main.pages.base_page import BasePage
 class AdministrationDashboardPage(BasePage):
     PAGE_HEADER = "//div[@class='page-header']/div/h1"
 
-    def __init__(self, browser):
-        super().__init__(browser)
-
     def get_admin_dashboard_page_header(self) -> str:
         try:
             header_element = self.wait_for_element(self.PAGE_HEADER)

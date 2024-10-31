@@ -14,7 +14,6 @@ class HomePage(BasePage):
     CATEGORIES = "//ul[@class='nav navbar-nav']"
     FEATURED_ITEMS = "//*[contains(text(),'Featured')]/../div[2]"
     ITEM_TO_CARD = "//h4/a[contains(text(), '{}')]//ancestor::div[contains(@class, 'product-thumb')]//button[@title='Add to Cart']"
-
     PRODUCT_PRICE = "//h4/a[contains(text(), '{}')]//ancestor::div[contains(@class, 'product-thumb')]//span[@class='price-new']"
 
     PRODUCT_PAGE_MAPPING = {

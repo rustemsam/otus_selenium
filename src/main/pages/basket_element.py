@@ -8,11 +8,8 @@ class Basket(BasePage):
     BASKET = "//div[@id='header-cart']/div/button[@type='button']"
     ITEMS_IN_BASKET = "//table[@class='table table-striped mb-2']/tbody"
 
-    def __init__(self, browser):
-        super().__init__(browser)
-
     def get_price_from_basket(self) -> float:
-        alert_success = AlertElement(self)
+        alert_success = AlertElement(self.browser)
         alert_success.wait_until_successful_alert_disappeared()
         try:
             updated_price = self.wait_for_element(self.BASKET).text

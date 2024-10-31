@@ -8,9 +8,6 @@ class Currency(BasePage):
     CURRENT_CURRENCY = "//*[contains(text(),'Currency')]/../strong"
     CURRENCY_OPTION = "//*[contains(text(),'{}')]"
 
-    def __init__(self, browser):
-        super().__init__(browser)
-
     def get_currency(self) -> str:
         try:
             return self.wait_for_element(self.CURRENT_CURRENCY).text

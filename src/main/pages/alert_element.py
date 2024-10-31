@@ -8,9 +8,6 @@ class AlertElement(BasePage):
     FAILURE_ALERT = "//*[@class='alert alert-danger alert-dismissible']"
     ALERT_DANGER = "//div[contains(@class,'alert-danger')]"
 
-    def __init__(self, browser):
-        super().__init__(browser)
-
     def wait_until_successful_alert_disappeared(self) -> None:
         try:
             self.wait_for_element_to_disappear(self.SUCCESS_ALERT)

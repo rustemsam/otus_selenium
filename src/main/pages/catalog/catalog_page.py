@@ -36,9 +36,6 @@ class CatalogPage(BasePage):
     GRID_VIEW = "//button[@id='button-grid']"
     PRODUCT_LIST = "product-list"
 
-    def __init__(self, browser):
-        super().__init__(browser)
-
     def get_list_of_desktops(self) -> list:
         try:
             desktops_search_count = self.wait_for_element(self.DESKTOP_LIST_CONTAINER)
@@ -79,12 +76,7 @@ class CatalogPage(BasePage):
     def get_total_elements_for_category(self) -> int:
         total_elements_for_categories = self.get_text(self.TOTAL_ELEMENTS_FOR_CATEGORY)
         match = re.search(r"\((\d+)\)", total_elements_for_categories)
-        if match:
-            return int(match.group(1))
-        else:
-            raise ValueError(
-                "Could not find the total elements in the category string."
-            )
+        return int(match.group(1))
 
     def sort_by_price_high_to_low(self) -> None:
         try:

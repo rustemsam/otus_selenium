@@ -6,9 +6,6 @@ from src.main.pages.base_page import BasePage
 class BottomPanel(BasePage):
     BOTTOM_PANEL = "//div/*[contains(text(),'{}')]/../ul"
 
-    def __init__(self, browser):
-        super().__init__(browser)
-
     def get_bottom_panel_options(self, option: str) -> list:
         try:
             ul_element = self.wait_for_element(self.BOTTOM_PANEL.format(option))
