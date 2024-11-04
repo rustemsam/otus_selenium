@@ -24,8 +24,8 @@ class AlertElement(BasePage):
                 alert_text = alert_element.text
                 return alert_text
             else:
-                print("Failure alert did not appear within the timeout period.")
+                self.logger.info("Failure alert did not appear within the timeout period.")
                 return ""
         except NoSuchElementException as e:
-            print(f"No failure alert found: {e}")
+            self.logger.info(f"No failure alert found: {e}")
             return ""
