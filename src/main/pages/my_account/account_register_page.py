@@ -31,7 +31,7 @@ class AccountRegisterPage(BasePage):
 
     @allure.step("Creating user with body '{account_request_body}'")
     def create_user(
-            self, account_request_body: AccountRequestBody, agree_checkbox: bool = True
+        self, account_request_body: AccountRequestBody, agree_checkbox: bool = True
     ) -> AccountRequestBody:
         self.input_value(self.INPUT_FIRST_NAME, account_request_body.first_name)
         self.input_value(self.INPUT_LAST_NAME, account_request_body.last_name)

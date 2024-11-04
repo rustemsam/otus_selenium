@@ -131,7 +131,9 @@ def test_product_view_toggle(browser, view_mode, expected_classes):
 
 @pytest.mark.parametrize("currency", ["Euro", "Pound Sterling"])
 # 3.4 Проверить, что при переключении валют цены на товары меняются в каталоге
-@allure.title("Check that when currency is changed the price is changing accordingly in the catalog")
+@allure.title(
+    "Check that when currency is changed the price is changing accordingly in the catalog"
+)
 def test_change_currency_in_catalog(browser, currency):
     home_page = HomePage(browser)
     home_page.go_to_page("Desktops")

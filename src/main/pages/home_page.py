@@ -69,11 +69,11 @@ class HomePage(BasePage):
     @allure.step("Get price of the product '{product_name}'")
     def get_price_of_product(self, product_name: str) -> str:
         try:
-            return self.wait_for_element(
-                self.PRODUCT_PRICE.format(product_name)
-            ).text
+            return self.wait_for_element(self.PRODUCT_PRICE.format(product_name)).text
         except NoSuchElementException as e:
-            self.logger.warning(f"Error when trying to retrieve price for product '{product_name}': {e}")
+            self.logger.warning(
+                f"Error when trying to retrieve price for product '{product_name}': {e}"
+            )
             return "0.0"
 
     @allure.step("Adding '{item}' to the basket")

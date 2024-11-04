@@ -99,7 +99,9 @@ def test_add_random_item_to_basket(browser, item):
 
 @pytest.mark.parametrize("currency", [("Euro"), ("Pound Sterling")])
 # 3.3  Проверить, что при переключении валют цены на товары меняются на главной
-@allure.title("Check that when currency is changed the price is changing accordingly on the main page")
+@allure.title(
+    "Check that when currency is changed the price is changing accordingly on the main page"
+)
 def test_change_currency(browser, currency):
     home_page = HomePage(browser)
     top_panel = Currency(browser)

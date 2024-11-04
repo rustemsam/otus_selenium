@@ -25,8 +25,12 @@ class BasePage:
         os.makedirs("logs", exist_ok=True)
         if not self.logger.handlers:
             if to_file:
-                self.logger.addHandler(logging.FileHandler(f"logs/{getattr(self.browser, 'test_name', 'default')}.log"))
-            self.logger.setLevel(getattr(self.browser, 'log_level', logging.INFO))
+                self.logger.addHandler(
+                    logging.FileHandler(
+                        f"logs/{getattr(self.browser, 'test_name', 'default')}.log"
+                    )
+                )
+            self.logger.setLevel(getattr(self.browser, "log_level", logging.INFO))
 
     def input_value(self, locator: str, value: str) -> None:
         self.logger.info(f"Input value {value}")
@@ -35,7 +39,7 @@ class BasePage:
         element.send_keys(value)
 
     def get_items_text(
-            self, parent_element: WebElement, locator: By = By.TAG_NAME, tag: str = "li"
+        self, parent_element: WebElement, locator: By = By.TAG_NAME, tag: str = "li"
     ) -> List[str]:
         try:
             li_elements = parent_element.find_elements(locator, tag)
@@ -56,36 +60,44 @@ class BasePage:
         return WebDriverWait(self.browser, timeout)
 
     def wait_for_element(
-            self, xpath: str, timeout: int = DEFAULT_TIMEOUT
+        self, xpath: str, timeout: int = DEFAULT_TIMEOUT
     ) -> Optional[WebElement]:
         try:
             wait = self._wait_with_timeout(timeout)
             return wait.until(EC.visibility_of_element_located((By.XPATH, xpath)))
         except TimeoutException:
-            self.logger.error(f"Element with locator {xpath} was not found for the time {timeout} seconds")
+            self.logger.error(
+                f"Element with locator {xpath} was not found for the time {timeout} seconds"
+            )
             return None
 
     def wait_for_element_to_be_clickable(
-            self, xpath: str, timeout: int = DEFAULT_TIMEOUT
+        self, xpath: str, timeout: int = DEFAULT_TIMEOUT
     ) -> Optional[WebElement]:
         try:
             wait = self._wait_with_timeout(timeout)
             return wait.until(EC.element_to_be_clickable((By.XPATH, xpath)))
         except TimeoutException:
-            self.logger.error(f"Element with locator '{xpath}' was not clickable within {timeout} seconds.")
+            self.logger.error(
+                f"Element with locator '{xpath}' was not clickable within {timeout} seconds."
+            )
             return None
 
     def wait_for_new_page_loaded(
-            self, url: str, timeout: int = DEFAULT_TIMEOUT
+        self, url: str, timeout: int = DEFAULT_TIMEOUT
     ) -> bool:
         try:
             wait = self._wait_with_timeout(timeout)
             return wait.until(EC.url_contains(url))
         except TimeoutException:
-            self.logger.warning(f"Page did not load with URL containing '{url}' within {timeout} seconds.")
+            self.logger.warning(
+                f"Page did not load with URL containing '{url}' within {timeout} seconds."
+            )
             return False
 
-    def wait_for_element_to_disappear(self, xpath: str, timeout: int = DEFAULT_TIMEOUT) -> bool:
+    def wait_for_element_to_disappear(
+        self, xpath: str, timeout: int = DEFAULT_TIMEOUT
+    ) -> bool:
         try:
             wait = self._wait_with_timeout(timeout)
             alert_present = wait.until(
@@ -95,7 +107,9 @@ class BasePage:
             self.logger.info(f"Element with locator '{xpath}' disappeared.")
             return True
         except TimeoutException:
-            self.logger.warning(f"Element with locator '{xpath}' didn't disappear within {timeout} seconds.")
+            self.logger.warning(
+                f"Element with locator '{xpath}' didn't disappear within {timeout} seconds."
+            )
             return False
 
     def scroll_to_element(self, element: WebElement) -> None:

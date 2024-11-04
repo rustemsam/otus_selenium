@@ -16,7 +16,7 @@ def test_admin_header(browser):
     header_text = admin_page.get_admin_header_text()
     expected_text = "Please enter your login details."
     assert (
-            expected_text == header_text
+        expected_text == header_text
     ), f"Expected text is {expected_text}, but got {header_text}"
 
 
@@ -30,7 +30,7 @@ def test_admin_login(browser):
     page_header = admin_dashboard.get_admin_dashboard_page_header()
     expected_text = "Dashboard"
     assert (
-            expected_text == page_header
+        expected_text == page_header
     ), f"Expected text is {expected_text}, but got {page_header}"
 
 

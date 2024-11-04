@@ -20,7 +20,9 @@ class CanonPage(CatalogPage):
         try:
             colour_dropdown = self.wait_for_element(self.COLOUR_OPTION)
             if not colour_dropdown:
-                self.logger.error(f"Color dropdown with locator '{self.COLOUR_OPTION}' not found.")
+                self.logger.error(
+                    f"Color dropdown with locator '{self.COLOUR_OPTION}' not found."
+                )
                 return
             self.scroll_to_element(colour_dropdown)
             select = Select(colour_dropdown)
@@ -32,4 +34,3 @@ class CanonPage(CatalogPage):
             colour_option.click()
         except NoSuchElementException as e:
             self.logger.error(f"Error when trying to select color '{colour}': {e}")
-

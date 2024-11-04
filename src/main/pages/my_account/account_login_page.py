@@ -41,7 +41,9 @@ class AccountLoginPage(BasePage):
             )
             return bool(account_header)
         except TimeoutException:
-            self.logger.info("Account page did not load or unique account element not found within the expected time.")
+            self.logger.info(
+                "Account page did not load or unique account element not found within the expected time."
+            )
             return False
 
     @allure.step("Getting account sections")

@@ -20,10 +20,10 @@ def pytest_addoption(parser):
 def pytest_runtest_makereport(item):
     outcome = yield
     rep = outcome.get_result()
-    if rep.outcome != 'passed':
-        item.status = 'failed'
+    if rep.outcome != "passed":
+        item.status = "failed"
     else:
-        item.status = 'passed'
+        item.status = "passed"
 
 
 @pytest.fixture
@@ -48,11 +48,11 @@ def browser(request):
         allure.attach(
             name="failure_screenshot",
             body=driver.get_screenshot_as_png(),
-            attachment_type=allure.attachment_type.PNG
+            attachment_type=allure.attachment_type.PNG,
         )
         allure.attach(
             name="page_source",
             body=driver.page_source,
-            attachment_type=allure.attachment_type.HTML
+            attachment_type=allure.attachment_type.HTML,
         )
     driver.quit()

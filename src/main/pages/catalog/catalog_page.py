@@ -11,17 +11,23 @@ from src.main.pages.base_page import BasePage
 
 
 class CatalogPage(BasePage):
-    DESKTOP_LIST_CONTAINER = "//h3[contains(text(),'Refine Search')]/following-sibling::div[1]//ul"
+    DESKTOP_LIST_CONTAINER = (
+        "//h3[contains(text(),'Refine Search')]/following-sibling::div[1]//ul"
+    )
     CATEGORY = "//a[@class='list-group-item' and contains(text(),'{}')]"
     ACTIVE_SUBCATEGORY = "//a[contains(text(), '{}')]"
     ITEM_IN_CATALOG = "//a[contains(text(), '{}')]"
     ADD_ITEM_TO_BASKET = "//button[@id='button-cart']"
     EMPTY_CART_MESSAGE = "//li[contains(text(), 'Your shopping cart is empty!')]"
-    ADD_ITEM_TO_WISHLIST = "//button[@class='btn btn-light']/i[@class='fa-solid fa-heart']"
+    ADD_ITEM_TO_WISHLIST = (
+        "//button[@class='btn btn-light']/i[@class='fa-solid fa-heart']"
+    )
     ADD_ITEM_TO_PRODUCT_COMPARISON = "//button[@class='btn btn-light']/i[@class='fa-solid fa-arrow-right-arrow-left']"
     SORT = "//select[@id='input-sort']"
     QUANTITY = "//input[@type='text' and @name='quantity']"
-    PRICE_OPTION_HIGH_LOW = "//select[@id='input-sort']/option[contains(text(),'Price (High > Low)')]"
+    PRICE_OPTION_HIGH_LOW = (
+        "//select[@id='input-sort']/option[contains(text(),'Price (High > Low)')]"
+    )
     PRICE_ELEMENTS = "//div[@class='price']"
     PRICE_IN_CATALOG = "//h2/span[@class='price-new']"
     TOTAL_ELEMENTS_FOR_CATEGORY = "//div/a[@class='list-group-item active']"
@@ -43,9 +49,13 @@ class CatalogPage(BasePage):
     @allure.step("Getting count of '{subcategory}'")
     def get_count_of_subcategory(self, subcategory: str) -> str:
         try:
-            return self.wait_for_element(self.ACTIVE_SUBCATEGORY.format(subcategory)).text
+            return self.wait_for_element(
+                self.ACTIVE_SUBCATEGORY.format(subcategory)
+            ).text
         except NoSuchElementException:
-            self.logger.warning(f"Error when trying to retrieve subcategory : {subcategory}")
+            self.logger.warning(
+                f"Error when trying to retrieve subcategory : {subcategory}"
+            )
             return ""
 
     @allure.step("Click '{category}' category")
@@ -88,7 +98,9 @@ class CatalogPage(BasePage):
     @allure.step("Retrieve all product prices")
     def get_prices(self) -> list:
         prices = self.browser.find_elements(By.XPATH, self.PRICE_ELEMENTS)
-        return [self._convert_price_to_float(price.text) for price in prices if price.text]
+        return [
+            self._convert_price_to_float(price.text) for price in prices if price.text
+        ]
 
     @allure.step("Click on product '{item}'")
     def click_on_product_item(self, item: str):
@@ -137,7 +149,9 @@ class CatalogPage(BasePage):
             except NoSuchElementException as e:
                 self.logger.error(f"Error when trying to add item to {action}: {e}")
         else:
-            self.logger.error(f"Invalid action: '{action}'. Expected 'basket', 'wishlist', or 'comparison'.")
+            self.logger.error(
+                f"Invalid action: '{action}'. Expected 'basket', 'wishlist', or 'comparison'."
+            )
 
     @allure.step("Changing quantity to '{quantity}'")
     def change_quantity_to(self, quantity: int):
