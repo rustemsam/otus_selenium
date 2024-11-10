@@ -1,3 +1,6 @@
+from typing import List
+
+import allure
 from selenium.common import NoSuchElementException
 
 from src.main.pages.alert_element import AlertElement
@@ -8,24 +11,29 @@ class Basket(BasePage):
     BASKET = "//div[@id='header-cart']/div/button[@type='button']"
     ITEMS_IN_BASKET = "//table[@class='table table-striped mb-2']/tbody"
 
+    @allure.step("Getting price from the basket")
     def get_price_from_basket(self) -> float:
         alert_success = AlertElement(self.browser)
         alert_success.wait_until_successful_alert_disappeared()
         try:
             updated_price = self.wait_for_element(self.BASKET).text
             price_value = updated_price.split("$")[-1].strip()
-            return float(price_value)
+            price_float = float(price_value)
+            self.logger.info(f"Retrieved basket price: {price_float}")
+            return price_float
         except (NoSuchElementException, ValueError) as e:
-            print(f"Error retrieving price from basket: {e}")
-            return 0.0
+            self.logger.warning(f"Error retrieving price from basket: {e}")
 
-    def get_item_from_basket(self) -> list:
+    @allure.step("Getting item from basket")
+    def get_item_from_basket(self) -> List[str]:
         try:
             alert_success = AlertElement(self.browser)
             alert_success.wait_until_successful_alert_disappeared()
             self.click_using_action(self.BASKET)
             elements = self.wait_for_element(self.ITEMS_IN_BASKET)
-            return self.get_items_text(elements, tag="td")
+            items = self.get_items_text(elements, tag="td")
+            self.logger.info(f"Items retrieved from basket: {items}")
+            return items
         except NoSuchElementException as e:
-            print(f"Error when trying to retrieve items from basket: {e}")
+            self.logger.warning(f"Error when trying to retrieve items from basket: {e}")
             return []

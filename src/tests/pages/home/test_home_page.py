@@ -1,3 +1,4 @@
+import allure
 import pytest
 
 from src.main.pages.basket_element import Basket
@@ -6,6 +7,7 @@ from src.main.pages.home_page import HomePage
 from src.main.pages.currency_element import Currency
 
 
+@allure.title("Check the main page title")
 def test_main_page_title(browser):
     HomePage(browser)
     expected_title = "Your Store"
@@ -14,6 +16,7 @@ def test_main_page_title(browser):
     ), f"Expected title  {expected_title}, but got {browser.title}"
 
 
+@allure.title("Check the options for the section Information")
 def test_information_section(browser):
     HomePage(browser)
     bottom_panel = BottomPanel(browser)
@@ -31,6 +34,7 @@ def test_information_section(browser):
     ), f"Expected list of elements  {expected_list}, but got {list_of_elements}"
 
 
+@allure.title("Check the categories section")
 def test_categories_section(browser):
     home_page = HomePage(browser)
     categories = home_page.get_list_categories()
@@ -50,6 +54,7 @@ def test_categories_section(browser):
     ), f"Expected list of elements  {expected_list}, but got {categories}"
 
 
+@allure.title("Check the number of featured items on the main page")
 def test_featured(browser):
     home_page = HomePage(browser)
     featured_elements = home_page.get_items_on_featured()
@@ -60,6 +65,7 @@ def test_featured(browser):
     ), f"Expected length of elements {expected_number_of_elements}, actual {len(featured_elements)}"
 
 
+@allure.title("Check the default currency on the main page")
 def test_default_currency(browser):
     HomePage(browser)
     top_panel = Currency(browser)
@@ -75,6 +81,7 @@ def test_default_currency(browser):
     "item",
     [("MacBook"), ("Canon EOS 5D")],
 )
+@allure.title("Check that the random item from the main page was added to the basket")
 # 3.2 Добавить в корзину случайный товар с главной страницы и проверить что он появился в корзине
 def test_add_random_item_to_basket(browser, item):
     home_page = HomePage(browser)
@@ -92,6 +99,9 @@ def test_add_random_item_to_basket(browser, item):
 
 @pytest.mark.parametrize("currency", [("Euro"), ("Pound Sterling")])
 # 3.3  Проверить, что при переключении валют цены на товары меняются на главной
+@allure.title(
+    "Check that when currency is changed the price is changing accordingly on the main page"
+)
 def test_change_currency(browser, currency):
     home_page = HomePage(browser)
     top_panel = Currency(browser)

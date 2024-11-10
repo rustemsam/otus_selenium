@@ -20,12 +20,6 @@ class AlertElement(BasePage):
     def get_failure_text_alert(self) -> str:
         try:
             alert_element = self.wait_for_element(self.FAILURE_ALERT, timeout=10)
-            if alert_element:
-                alert_text = alert_element.text
-                return alert_text
-            else:
-                print("Failure alert did not appear within the timeout period.")
-                return ""
-        except NoSuchElementException as e:
-            print(f"No failure alert found: {e}")
-            return ""
+            return alert_element.text
+        except NoSuchElementException:
+            self.logger.info("Failure alert did not appear within the timeout period.")

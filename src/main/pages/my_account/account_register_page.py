@@ -1,3 +1,4 @@
+import allure
 from selenium.webdriver.common.by import By
 
 from src.main.models.login_model import AccountRequestBody
@@ -28,8 +29,9 @@ class AccountRegisterPage(BasePage):
         url = f"{self.browser.base_url}/index.php?route=account/register"
         self.browser.get(url)
 
+    @allure.step("Creating user with body '{account_request_body}'")
     def create_user(
-        self, account_request_body: AccountRequestBody, agree_checkbox: bool = "true"
+        self, account_request_body: AccountRequestBody, agree_checkbox: bool = True
     ) -> AccountRequestBody:
         self.input_value(self.INPUT_FIRST_NAME, account_request_body.first_name)
         self.input_value(self.INPUT_LAST_NAME, account_request_body.last_name)
@@ -37,6 +39,7 @@ class AccountRegisterPage(BasePage):
         self.input_value(self.INPUT_PASSWORD, account_request_body.password)
 
         if agree_checkbox:
+            self.logger.info("Clicking agree checkbox.")
             agree_checkbox = self.wait_for_element(self.AGREE_CHECKBOX)
             self.js_click_to_element(agree_checkbox)
 
@@ -45,6 +48,7 @@ class AccountRegisterPage(BasePage):
 
         return account_request_body
 
+    @allure.step("Validation error for the field '{field_name}'")
     def get_validation_error(self, field_name: str) -> str:
         validation_xpath = {
             "first_name": self.FIRST_NAME_VALIDATION,
@@ -52,12 +56,16 @@ class AccountRegisterPage(BasePage):
             "email": self.EMAIL_VALIDATION,
             "password": self.PASSWORD_VALIDATION,
         }.get(field_name)
-
         return self.wait_for_element(validation_xpath).text if validation_xpath else ""
 
+    @allure.step("Getting successfully registration message")
     def get_successful_registration_message(self) -> str:
-        return self.wait_for_element(self.SUCCESSFUL_REGISTRATION).text
+        success_element = self.wait_for_element(self.SUCCESSFUL_REGISTRATION)
+        message = success_element.text if success_element else ""
+        self.logger.info(f"Registration success message: {message}")
+        return message
 
+    @allure.step("Getting pop up validation error")
     def get_pop_up_email_validation_error(self) -> str:
         email_field = self.browser.find_element(By.NAME, self.EMAIL)
         return self.browser.execute_script(self.JS_VALIDATION_MESSAGE, email_field)

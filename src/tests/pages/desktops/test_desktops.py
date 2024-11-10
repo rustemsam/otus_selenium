@@ -1,6 +1,7 @@
 import re
-
+import allure
 import pytest
+
 from selenium.webdriver.common.by import By
 
 from src.main.pages.catalog.catalog_page import CatalogPage
@@ -8,6 +9,7 @@ from src.main.pages.home_page import HomePage
 from src.main.pages.currency_element import Currency
 
 
+@allure.title("Check count of desktops")
 def test_desktops(browser):
     home_page = HomePage(browser)
     home_page.go_to_page("Desktops")
@@ -25,6 +27,7 @@ def test_desktops(browser):
     ), f"Expected text {expected_list}, but got {list_of_desktops}"
 
 
+@allure.title("Check count of pc desktops")
 def test_desktops_pc_count(browser):
     home_page = HomePage(browser)
     home_page.go_to_page("Desktops")
@@ -51,6 +54,7 @@ def test_desktops_pc_count(browser):
 
 
 # TODO: Bug 2
+@allure.title("Check count of elements")
 def test_desktops_count_of_elements(browser):
     home_page = HomePage(browser)
     home_page.go_to_page("Desktops")
@@ -70,6 +74,7 @@ def test_desktops_count_of_elements(browser):
 
 
 # TODO: Bug 3
+@allure.title("Check count of categories")
 def test_desktops_count_of_categories(browser):
     home_page = HomePage(browser)
     home_page.go_to_page("Desktops")
@@ -87,6 +92,7 @@ def test_desktops_count_of_categories(browser):
     ), f"Expected number of items  {total_count_of_desktops}, but got {total_items}"
 
 
+@allure.title("Check sorting for the price")
 def test_desktops_sorting(browser):
     home_page = HomePage(browser)
     home_page.go_to_page("Desktops")
@@ -106,6 +112,7 @@ def test_desktops_sorting(browser):
         ("grid", ["row-cols-sm-2", "row-cols-md-2", "row-cols-lg-3"]),
     ],
 )
+@allure.title("Check product view toggle")
 def test_product_view_toggle(browser, view_mode, expected_classes):
     home_page = HomePage(browser)
     home_page.go_to_page("Desktops")
@@ -124,6 +131,9 @@ def test_product_view_toggle(browser, view_mode, expected_classes):
 
 @pytest.mark.parametrize("currency", ["Euro", "Pound Sterling"])
 # 3.4 Проверить, что при переключении валют цены на товары меняются в каталоге
+@allure.title(
+    "Check that when currency is changed the price is changing accordingly in the catalog"
+)
 def test_change_currency_in_catalog(browser, currency):
     home_page = HomePage(browser)
     home_page.go_to_page("Desktops")

@@ -1,3 +1,4 @@
+import allure
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -28,14 +29,14 @@ class HomePage(BasePage):
     def go_to_home_page(self):
         self.browser.get(self.browser.base_url)
 
+    @allure.step("Go to the menu item page '{menu_item}'")
     def go_to_page(self, menu_item: str):
         try:
             self.wait_for_element(self.MENU.format(menu_item)).click()
             self.wait_for_element(self.SHOW_ALL.format(menu_item)).click()
             return self.get_page_object(menu_item)
         except NoSuchElementException as e:
-            print(f"Error when was going  to page '{menu_item}': {e}")
-            return None
+            self.logger.error(f"Error when was going  to page '{menu_item}': {e}")
 
     def get_page_object(self, menu_item: str):
         page_objects = {
@@ -46,31 +47,32 @@ class HomePage(BasePage):
         except KeyError:
             raise ValueError(f"Page object for {menu_item} is not defined.")
 
+    @allure.step("Get list of available categories")
     def get_list_categories(self) -> list:
         try:
             categories = self.wait_for_element(self.CATEGORIES)
             return self.get_items_text(categories)
         except NoSuchElementException as e:
-            print(f"Error when trying to retrieve categories: {e}")
-            return []
+            self.logger.warning(f"Error when trying to retrieve categories: {e}")
 
+    @allure.step("Get list of available featured items")
     def get_items_on_featured(self) -> list:
         try:
             element = self.wait_for_element(self.FEATURED_ITEMS)
             return element.find_elements(By.XPATH, "div")
         except NoSuchElementException as e:
-            print(f"Error when trying to retrieve featured items: {e}")
-            return []
+            self.logger.warning(f"Error when trying to retrieve featured items: {e}")
 
+    @allure.step("Get price of the product '{product_name}'")
     def get_price_of_product(self, product_name: str) -> str:
         try:
             return self.wait_for_element(self.PRODUCT_PRICE.format(product_name)).text
         except NoSuchElementException as e:
-            print(
+            self.logger.warning(
                 f"Error when trying to retrieve price for product '{product_name}': {e}"
             )
-            return "0.0"
 
+    @allure.step("Adding '{item}' to the basket")
     def add_item_to_basket(self, item: str) -> None:
         try:
             initial_url = self.browser.current_url
@@ -99,10 +101,10 @@ class HomePage(BasePage):
                     product_page.select_options()
                     product_page.add_item_to("card")
                 else:
-                    print(f"No specific handler for URL: {current_url}")
+                    self.logger.info(f"No specific handler for URL: {current_url}")
                     return
 
         except NoSuchElementException as e:
-            print(f"Error when trying to add item '{item}' to basket: {e}")
+            self.logger.error(f"Error when trying to add item '{item}' to basket: {e}")
         except Exception as e:
-            print(f"An unexpected error occurred: {e}")
+            self.logger.error(f"An unexpected error occurred: {e}")

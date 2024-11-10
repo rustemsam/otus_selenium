@@ -12,4 +12,3 @@ class AdministrationDashboardPage(BasePage):
             return header_element.text
         except NoSuchElementException as e:
             print(f"Page header element not found: {e}")
-            return "Header not found"

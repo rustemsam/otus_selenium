@@ -1,5 +1,6 @@
 import time
 
+import allure
 import pytest
 from selenium.common import NoSuchElementException
 
@@ -22,6 +23,7 @@ def create_user_fixture(browser):
     return post_request
 
 
+@allure.title("Check the registration of test account")
 def test_account_registration(browser):
     ts = int(time.time())
     post_request = AccountRequestBody(
@@ -57,6 +59,7 @@ def test_account_registration(browser):
         ),  # TODO: BUG 5
     ],
 )
+@allure.title("Check the registration of test account with invalid data")
 def test_account_registration_with_invalid_data(browser, post_request):
     account_page = AccountRegisterPage(browser)
     account_page.create_user(post_request)
@@ -97,6 +100,7 @@ def test_account_registration_with_invalid_data(browser, post_request):
         ("@.com", "Please enter a part followed by '@'. '@.com' is incomplete."),
     ],
 )
+@allure.title("Check the registration of test account with invalid email")
 def test_account_registration_with_invalid_email(browser, email, expected_test):
     post_request = AccountRequestBody(
         first_name="first_name",
@@ -112,6 +116,7 @@ def test_account_registration_with_invalid_email(browser, email, expected_test):
     ), f"Expected text is {expected_test}, but got {validation_message}"
 
 
+@allure.title("Check the registration of test account without policy agreeing")
 def test_account_registration_without_policy_agree(browser):
     ts = int(time.time())
     post_request = AccountRequestBody(
@@ -128,6 +133,7 @@ def test_account_registration_without_policy_agree(browser):
     assert expected_text == text, f"Expected text is {expected_text}, but got {text}"
 
 
+@allure.title("Check the registration of test account with email already registered")
 def test_account_registration_with_same_email(browser, create_user_fixture):
     post_request = create_user_fixture
     account_page = AccountRegisterPage(browser)
@@ -139,6 +145,7 @@ def test_account_registration_with_same_email(browser, create_user_fixture):
 
 
 # 3.1. автотест логина-разлогина в админку с проверкой, что логин был выполнен
+@allure.title("Check the login to the account")
 def test_account_login(browser, create_user_fixture):
     post_request = create_user_fixture
     account_login = AccountLoginPage(browser)

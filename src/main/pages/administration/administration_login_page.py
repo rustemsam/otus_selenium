@@ -44,7 +44,6 @@ class AdministrationLoginPage(BasePage):
             return self.wait_for_element(self.ADMIN_CARD_HEADER).text
         except NoSuchElementException as e:
             print(f"Error when trying to retrieve admin header text: {e}")
-            return ""
 
     def fill_username(self, username: str):
         try:

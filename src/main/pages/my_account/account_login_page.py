@@ -1,11 +1,10 @@
+import allure
 from selenium.common import TimeoutException
 
 from src.main.pages.base_page import BasePage
 
 
 class AccountLoginPage(BasePage):
-    DEFAULT_TIMEOUT = 10
-
     INPUT_EMAIL_NAME = "//input[@id='input-email']"
     INPUT_PASSWORD_NAME = "//input[@id='input-password']"
     SUBMIT_BUTTON = "//button[@type='submit']"
@@ -19,18 +18,20 @@ class AccountLoginPage(BasePage):
         url = f"{self.browser.base_url}/index.php?route=account/login"
         self.browser.get(url)
 
+    @allure.step("Login to the account with account name '{login}'")
     def login_to_account(self, login: str, password: str) -> None:
         try:
             self.input_value(self.INPUT_EMAIL_NAME, login)
             self.input_value(self.INPUT_PASSWORD_NAME, password)
-
             self.wait_for_element_to_be_clickable(self.SUBMIT_BUTTON).click()
         except Exception as e:
-            print(f"Error during retry login: {str(e)}")
+            self.logger.info(f"Error during retry login: {str(e)}")
 
-    def wait_for_account_page_loaded(self, timeout: int = DEFAULT_TIMEOUT):
+    @allure.step("Waiting the account page is loaded")
+    def wait_for_account_page_loaded(self, timeout: int = BasePage.DEFAULT_TIMEOUT):
         self.wait_for_new_page_loaded("account&customer_token=", timeout)
 
+    @allure.step("Personal account is opened")
     def personal_account_is_opened(self) -> bool:
         try:
             if "account&customer_token=" in self.browser.current_url:
@@ -40,11 +41,12 @@ class AccountLoginPage(BasePage):
             )
             return bool(account_header)
         except TimeoutException:
-            print(
+            self.logger.info(
                 "Account page did not load or unique account element not found within the expected time."
             )
             return False
 
+    @allure.step("Getting account sections")
     def get_account_sections(self) -> list:
         content = self.wait_for_element(self.ACCOUNT_CONTENT)
         return self.get_items_text(content, tag="h2")

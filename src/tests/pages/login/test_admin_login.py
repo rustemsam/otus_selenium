@@ -1,3 +1,5 @@
+import allure
+
 from src.main.helper.config_helper import ConfigHelper
 from src.main.pages.administration.administration_dashboard_page import (
     AdministrationDashboardPage,
@@ -8,6 +10,7 @@ from src.main.pages.administration.administration_login_page import (
 from src.main.pages.alert_element import AlertElement
 
 
+@allure.title("Check the header text of the admin page")
 def test_admin_header(browser):
     admin_page = AdministrationLoginPage(browser)
     header_text = admin_page.get_admin_header_text()
@@ -17,6 +20,7 @@ def test_admin_header(browser):
     ), f"Expected text is {expected_text}, but got {header_text}"
 
 
+@allure.title("Check the login to the admin panel")
 def test_admin_login(browser):
     admin_page = AdministrationLoginPage(browser)
     admin_page.login_to_admin_panel(
@@ -30,6 +34,7 @@ def test_admin_login(browser):
     ), f"Expected text is {expected_text}, but got {page_header}"
 
 
+@allure.title("Check the validation message when trying to login without password")
 def test_admin_login_without_password(browser):
     admin_page = AdministrationLoginPage(browser)
 
@@ -41,6 +46,7 @@ def test_admin_login_without_password(browser):
     assert expected_text == text, f"Expected text is {expected_text}, but got {text}"
 
 
+@allure.title("Check the validation when trying to login with wrong password")
 def test_admin_login_with_wrong_password(browser):
     admin_page = AdministrationLoginPage(browser)
     admin_page.login_to_admin_panel("admin", "_+!")
@@ -51,6 +57,7 @@ def test_admin_login_with_wrong_password(browser):
     assert expected_text == text, f"Expected text is {expected_text}, but got {text}"
 
 
+@allure.title("Check the validation when trying to login with wrong session")
 def test_admin_login_with_wrong_session(browser):
     invalid_token = "04ae8e91e7e24c295ccf4d7bcab3bd851"
     admin_page = AdministrationLoginPage(browser)
