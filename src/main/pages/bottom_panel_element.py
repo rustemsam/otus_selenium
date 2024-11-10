@@ -17,4 +17,3 @@ class BottomPanel(BasePage):
             return options
         except NoSuchElementException:
             self.logger.warning(f"Bottom panel for option '{option}' not found.")
-            return []

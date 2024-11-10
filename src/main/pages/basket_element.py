@@ -23,7 +23,6 @@ class Basket(BasePage):
             return price_float
         except (NoSuchElementException, ValueError) as e:
             self.logger.warning(f"Error retrieving price from basket: {e}")
-            return 0.0
 
     @allure.step("Getting item from basket")
     def get_item_from_basket(self) -> List[str]:

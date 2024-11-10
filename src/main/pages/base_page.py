@@ -46,7 +46,9 @@ class BasePage:
             self.logger.info(f"Found {len(li_elements)} items matching locator.")
             return [li.text.strip() for li in li_elements if li.text.strip()]
         except (NoSuchElementException, StaleElementReferenceException):
-            return []
+            self.logger.error(
+                f"There is not available text from elements {parent_element}"
+            )
 
     def get_text(self, path: str, locator: By = By.XPATH):
         try:
@@ -54,7 +56,7 @@ class BasePage:
             self.logger.info(f"The text from the element {element.text}")
             return element.text.strip()
         except (NoSuchElementException, StaleElementReferenceException):
-            return None
+            self.logger.error(f"There is not available text from element {locator}")
 
     def _wait_with_timeout(self, timeout: int):
         return WebDriverWait(self.browser, timeout)
@@ -69,7 +71,6 @@ class BasePage:
             self.logger.error(
                 f"Element with locator {xpath} was not found for the time {timeout} seconds"
             )
-            return None
 
     def wait_for_element_to_be_clickable(
         self, xpath: str, timeout: int = DEFAULT_TIMEOUT

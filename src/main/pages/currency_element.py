@@ -17,7 +17,6 @@ class Currency(BasePage):
             return currency
         except NoSuchElementException as e:
             self.logger.error(f"Failed to retrieve current currency: {e}")
-            return ""
 
     @allure.step("Change currency to '{currency_name}'")
     def change_currency(self, currency_name: str) -> str:
@@ -34,7 +33,6 @@ class Currency(BasePage):
             return currency_symbol
         except NoSuchElementException as e:
             self.logger.error(f"Failed to change currency to '{currency_name}': {e}")
-            return ""
 
     def _extract_currency_symbol(self, currency_text: str) -> str:
         return currency_text.split(" ")[0] if currency_text else ""

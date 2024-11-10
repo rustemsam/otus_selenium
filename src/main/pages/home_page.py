@@ -37,7 +37,6 @@ class HomePage(BasePage):
             return self.get_page_object(menu_item)
         except NoSuchElementException as e:
             self.logger.error(f"Error when was going  to page '{menu_item}': {e}")
-            return None
 
     def get_page_object(self, menu_item: str):
         page_objects = {
@@ -55,7 +54,6 @@ class HomePage(BasePage):
             return self.get_items_text(categories)
         except NoSuchElementException as e:
             self.logger.warning(f"Error when trying to retrieve categories: {e}")
-            return []
 
     @allure.step("Get list of available featured items")
     def get_items_on_featured(self) -> list:
@@ -64,7 +62,6 @@ class HomePage(BasePage):
             return element.find_elements(By.XPATH, "div")
         except NoSuchElementException as e:
             self.logger.warning(f"Error when trying to retrieve featured items: {e}")
-            return []
 
     @allure.step("Get price of the product '{product_name}'")
     def get_price_of_product(self, product_name: str) -> str:
@@ -74,7 +71,6 @@ class HomePage(BasePage):
             self.logger.warning(
                 f"Error when trying to retrieve price for product '{product_name}': {e}"
             )
-            return "0.0"
 
     @allure.step("Adding '{item}' to the basket")
     def add_item_to_basket(self, item: str) -> None:

@@ -44,7 +44,6 @@ class CatalogPage(BasePage):
             return self.get_items_text(desktops_search_count)
         except NoSuchElementException as e:
             self.logger.error(f"Error when trying to retrieve desktops: {e}")
-            return []
 
     @allure.step("Getting count of '{subcategory}'")
     def get_count_of_subcategory(self, subcategory: str) -> str:
@@ -56,7 +55,6 @@ class CatalogPage(BasePage):
             self.logger.warning(
                 f"Error when trying to retrieve subcategory : {subcategory}"
             )
-            return ""
 
     @allure.step("Click '{category}' category")
     def click_category(self, category: str):
@@ -116,7 +114,6 @@ class CatalogPage(BasePage):
             return self.browser.find_element(By.XPATH, self.PRICE_IN_CATALOG).text
         except NoSuchElementException:
             self.logger.error("Price element not found.")
-            return ""
 
     @allure.step("Retrieve numeric price of the product item")
     def get_product_item_price_number(self) -> float:
@@ -128,7 +125,6 @@ class CatalogPage(BasePage):
             return float(price_text.replace("$", "").replace(",", ""))
         except ValueError:
             self.logger.warning(f"Unable to convert price '{price_text}' to float.")
-            return 0.0
 
     @allure.step("Adding item to '{action}'")
     def add_item_to(self, action: str) -> None:
