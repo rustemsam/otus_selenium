@@ -72,11 +72,11 @@ def browser(request):
             "browserName": browser_name,
             "browserVersion": version,
             "selenoid:options": {
-                "enableVNC": vnc,  # Enable VNC for remote access
+                "enableVNC": vnc,
                 "name": request.node.name,
                 "screenResolution": "1280x2000",
-                "enableVideo": video,  # Enable video recording
-                "enableLog": logs,  # Enable logs
+                "enableVideo": video,
+                "enableLog": logs,
                 "timeZone": "Europe/Moscow",
                 "env": ["LANG=ru_RU.UTF-8", "LANGUAGE=ru:en", "LC_ALL=ru_RU.UTF-8"]
             },
