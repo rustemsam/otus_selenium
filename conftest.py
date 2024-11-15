@@ -25,13 +25,29 @@ def pytest_addoption(parser):
     )
     parser.addoption(
         "--selenium_url",
-        default="http://localhost:4444/wd/hub",  # Default Selenoid URL
+        default="http://localhost:4444/wd/hub",
         help="URL to the Selenoid executor",
     )
-    parser.addoption("--vnc", action="store_true")
-    parser.addoption("--logs", action="store_true")
-    parser.addoption("--video", action="store_true")
-    parser.addoption("--bv")
+    parser.addoption(
+        "--vnc",
+        action="store_true",
+        help="Enable VNC support for Selenoid (view live browser sessions)",
+    )
+    parser.addoption(
+        "--logs",
+        action="store_true",
+        help="Enable browser log collection for Selenoid sessions",
+    )
+    parser.addoption(
+        "--video",
+        action="store_true",
+        help="Enable video recording for Selenoid sessions",
+    )
+    parser.addoption(
+        "--bv",
+        default=None,
+        help="Browser version to use in tests",
+    )
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
