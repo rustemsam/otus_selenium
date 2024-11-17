@@ -122,7 +122,8 @@ class CatalogPage(BasePage):
 
     def _convert_price_to_float(self, price_text: str) -> float:
         try:
-            return float(price_text.replace("$", "").replace(",", ""))
+            clean_price = price_text.split("\n")[0]
+            return float(clean_price.replace("$", "").replace(",", ""))
         except ValueError:
             self.logger.warning(f"Unable to convert price '{price_text}' to float.")
 
