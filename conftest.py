@@ -90,7 +90,7 @@ def browser(request):
             "selenoid:options": {
                 "enableVNC": vnc,
                 "name": request.node.name,
-                "screenResolution": "1280x2000",  # Adjust resolution based on browser
+                "screenResolution": "1280x2000",
                 "enableVideo": video,
                 "enableLog": logs,
                 "timeZone": "Europe/Moscow",
