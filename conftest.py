@@ -15,7 +15,7 @@ def pytest_addoption(parser):
     )
     parser.addoption(
         "--base_url",
-        default="http://192.168.1.47:8081",
+        default="http://192.168.1.196:8081",
         help="Base URL for the application",
     )
     parser.addoption(
@@ -90,7 +90,7 @@ def browser(request):
             "selenoid:options": {
                 "enableVNC": vnc,
                 "name": request.node.name,
-                "screenResolution": "1280x2000",
+                "screenResolution": "1280x2000",  # Adjust resolution based on browser
                 "enableVideo": video,
                 "enableLog": logs,
                 "timeZone": "Europe/Moscow",
@@ -110,12 +110,31 @@ def browser(request):
     else:
         if browser_name == "chrome":
             options = ChromeOptions()
+            options.add_argument("--no-sandbox")
+            options.add_argument("--headless")
+            options.add_argument("--no-sandbox")
+            options.add_argument("--disable-dev-shm-usage")
+            options.add_argument("--disable-gpu")
             driver = webdriver.Chrome(options=options)
+
         elif browser_name == "firefox":
             options = FirefoxOptions()
+            options.add_argument("--no-sandbox")
+            options.add_argument("--headless")
+            options.add_argument("--no-sandbox")
+            options.add_argument("--disable-dev-shm-usage")
+            options.add_argument("--disable-gpu")
+            options.add_argument("--headless")
             driver = webdriver.Firefox(options=options)
+
         elif browser_name == "edge":
             options = EdgeOptions()
+            options.add_argument("--no-sandbox")
+            options.add_argument("--headless")
+            options.add_argument("--no-sandbox")
+            options.add_argument("--disable-dev-shm-usage")
+            options.add_argument("--disable-gpu")
+            options.add_argument("--headless")
             driver = webdriver.Edge(options=options)
         else:
             raise ValueError(f"Unsupported browser: {browser_name}")
