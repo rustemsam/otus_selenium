@@ -1,0 +1,101 @@
+version: '3'
+
+services:
+
+  phpadmin:
+    image: 'phpmyadmin/phpmyadmin:latest'
+    environment:
+      - PMA_HOST=mariadb
+      - PMA_PORT=3306  # Fixed typo
+      - PMA_USER=bn_opencart
+    ports:
+      - '8888:80'
+
+  mariadb:
+    image: docker.io/bitnami/mariadb:10.3
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MARIADB_USER=bn_opencart
+      - MARIADB_DATABASE=bitnami_opencart
+    volumes:
+      - 'mariadb_data:/bitnami/mariadb'
+      - ./my_custom_mariadb.cnf:/etc/mysql/my.cnf # Ensure this file exists
+    ports:
+      - '3306:3306'
+    networks:
+      - selenoid
+
+  opencart:
+    image: docker.io/bitnami/opencart:4.0.2-3
+    ports:
+      - '8081:8080'
+      - '443:8443'
+    environment:
+      - OPENCART_HOST=192.168.1.196:8081
+      - OPENCART_DATABASE_HOST=mariadb
+      - OPENCART_DATABASE_PORT_NUMBER=3306
+      - OPENCART_DATABASE_USER=bn_opencart
+      - OPENCART_DATABASE_NAME=bitnami_opencart
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - 'opencart_data:/bitnami/opencart'
+      - 'opencart_storage_data:/bitnami/opencart_storage/'
+    depends_on:
+      - mariadb
+    networks:
+      - selenoid
+
+  selenoid:
+    image: aerokube/selenoid:latest
+    container_name: selenoid
+    ports:
+      - "4444:4444"
+    networks:
+      - selenoid
+    command: ["-conf", "/etc/selenoid/browsers.json", "-video-output-dir", "/opt/selenoid/video", "-log-output-dir", "/opt/selenoid/logs", "-container-network", "selenoid"]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./browsers.json:/etc/selenoid/browsers.json
+    restart: always
+
+  selenoid-ui:
+    image: aerokube/selenoid-ui:latest
+    container_name: selenoid-ui
+    ports:
+      - "8090:8090"
+    networks:
+      - selenoid
+    command: [ "--selenoid-uri", "http://selenoid:4444", "-listen", ":8090" ]
+    restart: always
+
+  tests:
+      container_name: tests
+      build:
+        context: .
+        dockerfile: Dockerfile
+      command: ./wait-for-it.sh opencart 8080 pytest -v src/tests/pages/login/ \
+        --base_url http://opencart:8080 \
+        --browser chrome \
+        --remote
+        --selenium_url http://selenoid:4444/wd/hub
+      volumes:
+        - ./tests:/app/tests
+        - ./wait-for-it.sh:/app/wait-for-it.sh
+      depends_on:
+        - opencart
+      networks:
+        - selenoid
+
+networks:
+  selenoid:
+    name: selenoid
+    external: true
+
+
+volumes:
+  mariadb_data:
+    driver: local
+  opencart_data:
+    driver: local
+  opencart_storage_data:
+    driver: local
