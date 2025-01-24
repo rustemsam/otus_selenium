@@ -1,4 +1,3 @@
-
 FROM python:3.12
 
 WORKDIR /app
@@ -11,9 +10,12 @@ RUN apt-get update && apt-get install -y \
     libgconf-2-4 \
     libfontconfig1 \
     wget unzip \
+    netcat-openbsd  \
     && apt-get clean
 
-RUN pip install -r requirements.txt
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
