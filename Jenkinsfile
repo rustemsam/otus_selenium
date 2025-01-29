@@ -34,15 +34,16 @@ pipeline {
             steps {
                 sh '''
                 echo "Starting tests with the following parameters:"
-                echo "Executor Address: $EXECUTOR_ADDRESS"
-                echo "Application URL: $APPLICATION_URL"
-                echo "Browser: $BROWSER"
-                echo "Browser Version: $BROWSER_VERSION"
-                echo "Threads: $THREADS"
+                echo "Executor Address: ${params.EXECUTOR_ADDRESS}"
+                echo "Application URL: ${params.APPLICATION_URL}"
+                echo "Browser: ${params.BROWSER}"
+                echo "Browser Version: ${params.BROWSER_VERSION}"
+                echo "Threads: ${params.THREADS}"
 
-                python3 -m pytest --browser=$BROWSER \
-                                  --selenium_url=$EXECUTOR_ADDRESS \
-                                  --base_url=$APPLICATION_URL \
+
+                python3 -m pytest --browser=${params.BROWSER} \
+                                  --selenium_url=${params.EXECUTOR_ADDRESS} \
+                                  --base_url=${params.APPLICATION_URL} \
                                   --junit-xml=junit.xml \
                                   --alluredir=allure-results \
                                   src/tests/pages/login/test_admin_login.py
