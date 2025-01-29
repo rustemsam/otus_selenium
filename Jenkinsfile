@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     parameters {
-        string(name: 'EXECUTOR_ADDRESS', defaultValue: 'http://localhost:4444/wd/hub', description: 'Address of the Selenoid executor')
-        string(name: 'APPLICATION_URL', defaultValue: 'http://192.168.1.196:8081', description: 'Address of the OpenCart application')
+        string(name: 'EXECUTOR_ADDRESS', defaultValue: 'http://localhost:4444/wd/hub', description: 'Selenoid executor address')
+        string(name: 'APPLICATION_URL', defaultValue: 'http://192.168.1.196:8081', description: 'OpenCart application URL')
         string(name: 'BROWSER', defaultValue: 'chrome', description: 'Browser to use')
         string(name: 'THREADS', defaultValue: '1', description: 'Number of threads')
         string(name: 'BROWSER_VERSION', defaultValue: 'latest', description: 'Browser version')
@@ -15,11 +15,13 @@ pipeline {
                 deleteDir()
             }
         }
+
         stage('Checkout Code') {
             steps {
                 git branch: 'main', url: 'https://github.com/rustemsam/otus_selenium'
             }
         }
+
         stage('Install Dependencies') {
             steps {
                 sh '''
@@ -32,22 +34,29 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                sh '''
-                echo "Starting tests with the following parameters:"
-                echo "Executor Address: ${params.EXECUTOR_ADDRESS}"
-                echo "Application URL: ${params.APPLICATION_URL}"
-                echo "Browser: ${params.BROWSER}"
-                echo "Browser Version: ${params.BROWSER_VERSION}"
-                echo "Threads: ${params.THREADS}"
+                script {
+                    def executor = params.EXECUTOR_ADDRESS
+                    def app_url = params.APPLICATION_URL
+                    def browser = params.BROWSER
+                    def browser_version = params.BROWSER_VERSION
+                    def threads = params.THREADS
 
+                    sh """
+                    echo "Starting tests with the following parameters:"
+                    echo "Executor Address: $executor"
+                    echo "Application URL: $app_url"
+                    echo "Browser: $browser"
+                    echo "Browser Version: $browser_version"
+                    echo "Threads: $threads"
 
-                python3 -m pytest --browser=${params.BROWSER} \
-                                  --selenium_url=${params.EXECUTOR_ADDRESS} \
-                                  --base_url=${params.APPLICATION_URL} \
-                                  --junit-xml=junit.xml \
-                                  --alluredir=allure-results \
-                                  src/tests/pages/login/test_admin_login.py
-                '''
+                    python3 -m pytest --browser=$browser \
+                                      --selenium_url=$executor \
+                                      --base_url=$app_url \
+                                      --junit-xml=reports/junit.xml \
+                                      --alluredir=allure-results \
+                                      src/tests/pages/login/test_admin_login.py
+                    """
+                }
             }
         }
 
@@ -60,8 +69,8 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: 'junit.xml', fingerprint: true
-            junit 'junit.xml'
+            archiveArtifacts artifacts: 'reports/junit.xml', fingerprint: true
+            junit 'reports/junit.xml'
         }
         failure {
             echo "Build failed! Check logs for errors."
